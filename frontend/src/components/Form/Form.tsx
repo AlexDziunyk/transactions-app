@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../Input/Input";
 import "./style.scss";
 import { IOrderItem } from "../../types/order";
@@ -63,9 +63,18 @@ const Form = ({ setOrders }: IFormProps) => {
     );
     const json = await response.json();
 
+    if (json.error) {
+      setError(json.error);
+      return;
+    }
+
     setOrders(json.data);
     setFormData(initialFormData);
   };
+
+  useEffect(() => {
+    setError("");
+  }, [formData]);
 
   return (
     <form onSubmit={createorder} className="form">
