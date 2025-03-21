@@ -7,6 +7,8 @@ const createOrder = async (req, res) => {
     const { userId, productId, quantity } = req.body;
     const product = await Product.findById(productId);
 
+    console.log(product);
+
     if (!product) {
       return res.status(404).json({ error: "Such product doesn't exist!" });
     }
@@ -19,6 +21,7 @@ const createOrder = async (req, res) => {
     const user = await User.findById(userId);
 
     if (totalPrice > user.balance) {
+      console.log("NO MONEEEY");
       return res.status(400).json({ error: "You have not enough money!" });
     }
 
@@ -57,7 +60,9 @@ const getOrderByUserId = async (req, res) => {
 
     const orders = await Order.find({
       userId: userId,
-    });
+    })
+      .populate("userId")
+      .populate("productId");
 
     return res.status(200).json({
       msg: "All orders of this user successfuly retrieved",
