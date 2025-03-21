@@ -1,43 +1,45 @@
 const Product = require("../models/product");
 const User = require("../models/user");
 const Order = require("../models/order");
+const {
+  totalPrice,
+  isEnoughBalance,
+  isEnoughInStock,
+} = require("../utils/functions");
 
 const createOrder = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
     const product = await Product.findById(productId);
 
-    console.log(product);
-
     if (!product) {
       return res.status(404).json({ error: "Such product doesn't exist!" });
     }
 
-    if (quantity > product.stock) {
+    if (!isEnoughInStock(product.stock, quantity)) {
       return res.status(400).json({ error: "There are not enought products!" });
     }
 
-    const totalPrice = product.price * quantity;
+    const allPrice = totalPrice(product.price, quantity);
     const user = await User.findById(userId);
 
-    if (totalPrice > user.balance) {
-      console.log("NO MONEEEY");
+    if (!isEnoughBalance(user.balance, allPrice)) {
       return res.status(400).json({ error: "You have not enough money!" });
     }
-
-    product.stock = product.stock - quantity;
-    await product.save();
-
-    user.balance = user.balance - totalPrice;
-    await user.save();
 
     const order = new Order({
       userId: user.id,
       productId: product.id,
       quantity: quantity,
-      totalPrice: totalPrice,
+      totalPrice: allPrice,
     });
     await order.save();
+
+    product.stock = product.stock - quantity;
+    await product.save();
+
+    user.balance = user.balance - allPrice;
+    await user.save();
 
     return res.status(200).json({
       msg: "New order successfuly created!",
