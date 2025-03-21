@@ -5,7 +5,7 @@
 3. Write ```cd frontend``` to enter frontend folder and create .env file that looks like this: ```VITE_API_URL=http://localhost:3001/api```.
 4. Write ```docker-compose up --build``` in the console when you're in the root folder of the project.
 5. On ```http://localhost:5173/``` you can see working application.
-6. You can check local mongodb by this address ```mongodb://localhost:27017``` to look at the entities that exist.
+6. You can check local mongodb by this address ```mongodb://localhost:27017``` in MongoDB Compass to look at the entities that exist.
 7. During the application's launch, one user entity and three product entities are created.
 
 ## How to test this application?
