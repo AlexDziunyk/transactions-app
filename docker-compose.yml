@@ -28,6 +28,20 @@ services:
       - transactions-app
     depends_on:
       - mongo
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - transactions-app
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
 volumes:
   mongo_data:
 networks:
